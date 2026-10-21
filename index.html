@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0e13" />
+  <title>AUTO NUMBERS — коллекционируй номера</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root{color-scheme:dark;--bg:#0b0e13;--panel:#121720;--panel2:#171e29;--line:#273140;--muted:#8e9aab;--text:#f2f5fa;--blue:#68b8ff;--mint:#62e0b0;--gold:#f4c76b;--red:#ff7c88}
+    *{box-sizing:border-box} body{margin:0;background:radial-gradient(ellipse at 50% -20%,#1a2a3d 0,transparent 47%),var(--bg);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);min-height:100vh}
+    button{font:inherit;cursor:pointer} button:disabled{opacity:.45;cursor:not-allowed}
+    .app{max-width:1080px;margin:0 auto;padding:22px 18px 46px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:22px}
+    .brand{display:flex;align-items:center;gap:11px}.logo{width:42px;height:42px;border:1px solid #36506c;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#1e3b56,#111a26);color:var(--blue);font-size:21px;box-shadow:0 8px 30px #0006}.brand h1{font-size:18px;letter-spacing:.12em;margin:0;font-weight:900}.brand p{font-size:11px;color:var(--muted);margin:3px 0 0;letter-spacing:.12em;text-transform:uppercase}
+    .balance{display:flex;align-items:center;gap:10px;background:#121923;border:1px solid var(--line);border-radius:14px;padding:10px 14px}.balance small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.1em}.balance strong{display:block;font-size:18px;font-variant-numeric:tabular-nums;color:var(--mint);margin-top:2px;white-space:nowrap}.coin{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;color:#12161b;background:linear-gradient(145deg,#ffe49b,#dca43b);font-weight:900}
+    .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}.panel{background:linear-gradient(160deg,#151b25,#10151d);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 12px 42px #0002}.roulette{padding:24px;position:relative;min-height:380px}.eyebrow{font-size:11px;font-weight:800;letter-spacing:.17em;text-transform:uppercase;color:var(--blue)}h2{font-size:clamp(24px,4vw,36px);line-height:1.07;letter-spacing:-.04em;margin:9px 0 8px}.sub{color:var(--muted);font-size:13px;line-height:1.55;margin:0;max-width:460px}.plate-wrap{margin:27px 0 19px;display:flex;justify-content:center;perspective:700px;position:relative;isolation:isolate}.plate-wrap .plate{position:relative;z-index:2}.plate-wrap::before{content:"";position:absolute;inset:-22px;border-radius:50%;opacity:0;z-index:0;pointer-events:none;transition:opacity .2s}.plate-wrap.fx-common::before{opacity:1;background:radial-gradient(ellipse,#9ba7b822 0,transparent 68%)}.plate-wrap.fx-rare::before{opacity:1;background:radial-gradient(ellipse,#62b9ff55 0,transparent 68%);animation:haloPulse .9s ease-in-out 2 alternate}.plate-wrap.fx-epic::before{opacity:1;background:radial-gradient(ellipse,#ba8dff55 0,transparent 68%);animation:haloPulse .8s ease-in-out 2 alternate}.plate-wrap.fx-legendary::before{opacity:1;background:radial-gradient(ellipse,#f4c76b66 0,transparent 70%);animation:haloPulse 1s ease-in-out infinite alternate}.plate-wrap.fx-mythical::before{opacity:1;background:radial-gradient(ellipse,#ff5be766 0,transparent 70%);animation:haloPulse .65s ease-in-out infinite alternate}.plate-wrap.fx-common .plate{animation:commonReveal .55s cubic-bezier(.2,.8,.2,1)}.plate-wrap.fx-rare .plate{animation:rareReveal .75s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 0 1px #62b9ff66,0 0 20px #62b9ff66,0 15px 40px #0009,inset 0 -4px 0 #c8d0d6}.plate-wrap.fx-epic .plate{animation:epicReveal .85s cubic-bezier(.2,.8,.2,1)}.plate-wrap.fx-legendary .plate{animation:legendaryReveal 1.15s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 0 2px #f4c76b70,0 0 28px #f4c76b99,0 15px 40px #0009,inset 0 -4px 0 #c8d0d6}.plate-wrap.fx-mythical .plate{animation:mythicalReveal 1.35s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 0 3px #ff5be799,0 0 42px #ff5be7cc,0 0 85px #7657ff55,inset 0 -4px 0 #c8d0d6}.plate-wrap.fx-lucky::before{background:radial-gradient(ellipse,#ffdc88aa 0,#ff5be766 38%,transparent 72%);opacity:1;animation:luckyHalo .55s ease-in-out 3 alternate}.plate-wrap.fx-lucky .plate{filter:drop-shadow(0 0 15px #ffdc88)}.confetti{position:absolute;inset:-25px 0;z-index:4;pointer-events:none;overflow:visible}.confetti-piece{position:absolute;top:18%;width:7px;height:11px;border-radius:2px;opacity:0;animation:confettiFall var(--duration,1.5s) cubic-bezier(.1,.7,.3,1) var(--delay,0s) forwards;will-change:transform,opacity}.luck-note{display:flex;align-items:flex-start;justify-content:center;gap:9px;max-width:500px;margin:13px auto 0;padding:10px 12px;border:1px solid #51442b;background:linear-gradient(120deg,#201d17,#171822);border-radius:12px;color:#c8cfda;font-size:11px;line-height:1.45;text-align:left}.luck-note strong{color:#ffdc88;letter-spacing:.02em}.luck-icon{font-size:21px;line-height:1;color:#ffdc88}.luck-mark{font-size:8px;letter-spacing:.05em;font-weight:900;color:#ffdc88;background:#382d19;border:1px solid #66502a;padding:3px 5px;border-radius:5px;white-space:nowrap}.plate{width:min(100%,410px);min-height:102px;border-radius:13px;background:linear-gradient(#ffffff,#e8edf1);border:5px solid #d2d9df;outline:1px solid #ffffff40;box-shadow:0 15px 40px #0009,inset 0 -4px 0 #c8d0d6;color:#111820;display:flex;align-items:stretch;overflow:hidden;transform:rotateX(1deg);transition:transform .2s}.plate.rolling{animation:shake .12s linear infinite}.plate .country{width:39px;background:linear-gradient(90deg,#214c82,#163763);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;letter-spacing:.03em;font-weight:800;border-right:2px solid #c8d1d8}.country .flag{font-size:17px;line-height:1.2;margin-bottom:4px}.plate .chars{flex:1;display:flex;justify-content:center;align-items:center;gap:clamp(3px,1vw,9px);padding:8px 10px;font-family:Arial,sans-serif;font-size:clamp(25px,5.5vw,45px);font-weight:900;letter-spacing:.02em;white-space:nowrap}.plate .region{min-width:53px;border-left:2px solid #c8d1d8;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:clamp(21px,3vw,30px);font-weight:900;padding:4px}.plate .region small{font-size:9px;letter-spacing:.03em;margin-top:2px}.result-line{min-height:20px;text-align:center;color:var(--muted);font-size:12px;margin-bottom:15px}.action-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.btn{border:0;border-radius:13px;padding:14px 18px;font-weight:850;transition:transform .15s,filter .15s}.btn:active{transform:scale(.98)}.btn-primary{background:linear-gradient(135deg,#7ac6ff,#4098e8);color:#07121e;box-shadow:0 8px 24px #378dde30}.btn-secondary{background:#202938;border:1px solid #344255;color:#e6edf6}.btn-wide{min-width:min(100%,230px)}.price{font-size:11px;font-weight:800;opacity:.72;margin-left:6px}.hint{text-align:center;font-size:10px;color:#778599;margin-top:12px}
+    .side{display:flex;flex-direction:column;gap:16px}.daily{padding:21px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.section-head h3{font-size:15px;margin:0;font-weight:850}.tiny-tag{font-size:9px;letter-spacing:.1em;text-transform:uppercase;border:1px solid #365845;border-radius:99px;padding:5px 8px;color:var(--mint)}.daily-row{display:flex;align-items:center;gap:13px;margin:18px 0}.gift{width:48px;height:48px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(145deg,#273e39,#182720);font-size:23px;border:1px solid #335247}.daily-row strong{font-size:17px;display:block}.daily-row span{font-size:11px;color:var(--muted);display:block;margin-top:4px}.btn-daily{width:100%;padding:12px;border-radius:11px}.info{padding:21px;flex:1}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}.stat{background:#0d1219;border:1px solid #222d3b;border-radius:13px;padding:13px}.stat small{font-size:10px;color:var(--muted);display:block}.stat strong{font-size:20px;display:block;margin-top:6px;font-variant-numeric:tabular-nums}.rarity-list{margin-top:18px;display:grid;gap:9px}.rarity-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#c6d0de}.rarity-left{display:flex;align-items:center;gap:8px}.dot{width:7px;height:7px;border-radius:50%;background:var(--rarity)}.rarity-row span:last-child{color:var(--muted)}
+    .garage-bulk{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;margin:0 0 16px}.garage-bulk select{min-width:0;width:100%;background:#0d1219;color:var(--text);border:1px solid #344255;border-radius:11px;padding:11px 12px;font:inherit;font-size:12px}.garage-bulk button{padding:11px 13px;border-radius:11px;font-size:11px;white-space:nowrap}.garage-bulk-info{grid-column:1/-1;color:var(--muted);font-size:11px;line-height:1.4}.collection{margin-top:18px;padding:22px}.collection-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.collection-head h3{margin:0;font-size:18px}.count{font-size:11px;color:var(--muted);margin-left:8px;font-weight:500}.collection-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.empty{grid-column:1/-1;text-align:center;padding:32px 14px;color:var(--muted);border:1px dashed #303b4a;border-radius:14px;font-size:13px}.item{border:1px solid #2a3544;background:#0e131b;border-radius:15px;padding:12px;min-width:0}.item .plate{min-height:53px;border-width:3px;border-radius:8px;box-shadow:none;outline:0}.item .plate .country{width:22px;font-size:6px}.item .plate .country .flag{font-size:10px;margin-bottom:1px}.item .plate .chars{font-size:clamp(12px,1.8vw,20px);gap:3px;padding:3px}.item .plate .region{min-width:30px;font-size:13px}.item .plate .region small{font-size:5px}.item-meta{display:flex;justify-content:space-between;gap:5px;align-items:center;margin:10px 0 8px}.rarity{font-size:9px;text-transform:uppercase;letter-spacing:.06em;font-weight:900;color:var(--rarity)}.worth{font-size:11px;color:#dae4ef;font-weight:800;white-space:nowrap}.sell{width:100%;padding:9px 10px;background:#1b2a29;color:#8ce5c2;border:1px solid #315047;border-radius:9px;font-size:11px;font-weight:850}.sell:disabled{opacity:.5}.bottom-note{margin:20px 3px 0;color:#677488;font-size:10px;text-align:center;line-height:1.6}.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,30px);opacity:0;pointer-events:none;background:#eaf4ff;color:#101820;padding:12px 17px;border-radius:12px;font-size:13px;font-weight:800;box-shadow:0 15px 50px #0009;transition:.22s;z-index:10;max-width:calc(100% - 30px);text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
+    .reveal-char{display:inline-block;opacity:0;filter:blur(7px);transform:translateY(10px) scale(.78);animation:charReveal .32s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:var(--char-delay,0ms)}.region .reveal-char{font-size:inherit}.plate.revealing .chars{gap:clamp(3px,1vw,9px)}@keyframes charReveal{0%{opacity:0;filter:blur(7px);transform:translateY(10px) scale(.78)}65%{opacity:1;filter:blur(0);transform:translateY(-2px) scale(1.08)}100%{opacity:1;filter:blur(0);transform:translateY(0) scale(1)}}
+    @keyframes shake{0%{transform:translateX(-2px) rotate(-.4deg)}50%{transform:translateX(2px) rotate(.4deg)}100%{transform:translateX(-2px) rotate(-.2deg)}}@keyframes commonReveal{0%{transform:scale(.94) translateY(5px);filter:brightness(.85)}55%{transform:scale(1.035) translateY(-2px);filter:brightness(1.15)}100%{transform:scale(1) translateY(0);filter:brightness(1)}}@keyframes rareReveal{0%{transform:scale(.86) rotateY(-10deg);filter:brightness(.7)}55%{transform:scale(1.09) rotateY(5deg);filter:brightness(1.45)}100%{transform:scale(1) rotateY(0);filter:brightness(1)}}@keyframes epicReveal{0%{transform:scale(.84) rotateY(-16deg);filter:brightness(.75)}55%{transform:scale(1.08) rotateY(7deg);filter:brightness(1.4)}100%{transform:scale(1) rotateY(0);filter:brightness(1)}}@keyframes legendaryReveal{0%{transform:scale(.72) rotateY(-25deg);filter:brightness(.5)}45%{transform:scale(1.14) rotateY(12deg);filter:brightness(1.8)}70%{transform:scale(.97) rotateY(-5deg)}100%{transform:scale(1) rotateY(0);filter:brightness(1)}}@keyframes mythicalReveal{0%{transform:scale(.55) rotateY(-35deg);filter:brightness(.4) saturate(.7)}35%{transform:scale(1.19) rotateY(16deg);filter:brightness(2.1) saturate(1.5)}58%{transform:scale(.94) rotateY(-8deg)}78%{transform:scale(1.08) rotateY(3deg);filter:brightness(1.5)}100%{transform:scale(1) rotateY(0);filter:brightness(1) saturate(1)}}@keyframes haloPulse{from{transform:scale(.94);filter:brightness(.85)}to{transform:scale(1.08);filter:brightness(1.3)}}@keyframes luckyHalo{from{transform:scale(.92);filter:brightness(1)}to{transform:scale(1.18);filter:brightness(1.8)}}@keyframes confettiFall{0%{opacity:0;transform:translate3d(0,-12px,0) rotate(0deg)}12%{opacity:1}100%{opacity:0;transform:translate3d(var(--dx,0px),var(--dy,180px),0) rotate(var(--rot,420deg))}}
+    .quick-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:10px}.quick-row>span{font-size:10px;color:#778599}.quick-toggle{padding:9px 12px;font-size:10px;letter-spacing:.04em}.quick-toggle.quick-on{border-color:#366e59;color:var(--mint);background:#162a25}
+    .luck-meter{max-width:500px;margin:10px auto 0;padding:0 3px}.luck-meter-head{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:10px}.luck-meter-head strong{color:#ffdc88;letter-spacing:.12em}.luck-meter-head span{color:#d9c995;font-variant-numeric:tabular-nums}.meter-track{height:8px;margin-top:8px;background:#080c12;border:1px solid #392f22;border-radius:99px;overflow:hidden}.meter-fill{height:100%;width:0;background:linear-gradient(90deg,#b27d35,#ffdc88,#ff76dc);border-radius:99px;box-shadow:0 0 14px #ffdc8877;transition:width .35s ease}.luck-meter p{font-size:10px;line-height:1.5;color:#8e9aab;margin:7px 0 0}
+    .task-panels{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}.task-panel{padding:20px;min-width:0}.task-intro{margin:10px 0 0;color:var(--muted);font-size:11px;line-height:1.5}.weekly-tag{border-color:#55416e;color:#c5a6ff}.task-list{display:grid;gap:10px;margin-top:14px}.task-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px;border:1px solid #293444;background:#0e131b;border-radius:13px}.task-body{min-width:0}.task-title{display:block;font-size:12px;line-height:1.35}.task-desc{display:block;color:var(--muted);font-size:10px;line-height:1.4;margin-top:4px}.task-progress-head{display:flex;justify-content:space-between;gap:8px;color:#778599;font-size:9px;margin-top:8px}.task-progress-track{height:5px;margin-top:5px;background:#242c38;border-radius:99px;overflow:hidden}.task-progress-fill{height:100%;background:linear-gradient(90deg,#4597e6,#72c6ff);border-radius:99px;transition:width .25s}.task-claim{border:1px solid #3a536c;border-radius:9px;padding:9px 10px;background:#1c2b3c;color:#91ceff;font-size:10px;line-height:1.35;font-weight:900;min-width:100px;max-width:132px}.task-claim.ready{background:#19352c;border-color:#37654e;color:#84edbb}.task-claim.claimed{background:#171d26;border-color:#293341;color:#778599}.task-empty{color:var(--muted);font-size:11px;padding:8px 0}
+    .contracts-panel{margin-top:18px;padding:20px}.contract-tag{border-color:#64513a;color:#f4c76b}.contracts-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:15px}.contract-card{padding:17px;border:1px solid #303746;border-radius:16px;background:linear-gradient(145deg,#171d27,#0d1219);min-width:0}.contract-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:23px;margin-bottom:12px}.epic-icon{color:#ba8dff;background:#34254a;border:1px solid #65478a}.legendary-icon{color:#f4c76b;background:#3b3020;border:1px solid #806332}.contract-title{font-size:14px;font-weight:900}.contract-card p{margin:7px 0;color:var(--muted);font-size:11px}.contract-chance{font-size:12px;font-weight:900;margin-top:10px}.legendary-text{color:#f4c76b}.mythical-text{color:#ff5be7}.contract-progress{font-size:10px;color:#aab5c5;margin:8px 0 12px}.contract-btn{width:100%;padding:11px 8px;border-radius:10px;font-size:10px;font-weight:900;border:1px solid}.legendary-btn{background:#332a1b;color:#f4c76b;border-color:#72572b}.mythical-btn{background:#321c32;color:#ff8bea;border-color:#773d72}.contract-result{font-size:11px;line-height:1.5;color:var(--muted);margin-top:13px;padding:11px 12px;background:#0c1118;border:1px solid #252f3d;border-radius:11px}.bottom-nav button[data-target="contractsSection"]{display:none}@media(max-width:440px){.contracts-panel{padding:15px}.contracts-grid{grid-template-columns:1fr}.contract-card{padding:14px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
+    @media(max-width:760px){.app{padding:15px 12px 30px}.hero{grid-template-columns:1fr}.task-panels{grid-template-columns:1fr}.roulette{padding:20px 15px;min-height:auto}.side{display:grid;grid-template-columns:1fr 1fr;align-items:stretch}.daily,.info{padding:16px}.stats{grid-template-columns:1fr 1fr}.collection{padding:16px}.collection-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.brand h1{font-size:15px}.brand p{font-size:9px}.balance{padding:8px 10px}.balance strong{font-size:15px}.balance .coin{display:none}}
+    @media(max-width:440px){.topbar{align-items:flex-start}.side{grid-template-columns:1fr}.plate{min-height:85px}.plate .country{width:32px}.plate .region{min-width:45px}.collection-grid{gap:9px}.item{padding:9px}.collection-head{align-items:flex-start;flex-direction:column}.btn-wide{width:100%}}
+  </style>
+
+  <style>
+    /* AUTO NUMBERS — mobile-first visual refresh inspired by the supplied references */
+    :root{--bg:#0b0b0b;--panel:#171717;--panel2:#202020;--line:#303030;--muted:#888;--text:#f4f3f0;--blue:#78b7ff;--mint:#e8e6e1;--gold:#f4c84f;--red:#ff6671}
+    body{background:#090909;color:var(--text);padding-bottom:100px;background-image:none}
+    .app{max-width:760px;padding:18px 16px 30px}
+    .topbar{position:sticky;top:0;z-index:8;margin:-18px -16px 16px;padding:18px 16px 14px;background:#0b0b0bf2;backdrop-filter:blur(18px);border-bottom:1px solid #242424;align-items:center}
+    .logo{background:#1d1d1d;border-color:#383838;color:#f5f5f5;border-radius:50%;box-shadow:none}
+    .brand h1{letter-spacing:.02em;font-size:17px}.brand p{display:none}
+    .balance{background:#202020;border:1px solid #383838;border-radius:28px;padding:9px 14px;gap:8px}.balance small{display:none}.balance strong{color:#f5f5f5;font-size:19px;margin:0}.coin{display:none}
+    .hero{display:block}.panel{background:#171717;border:1px solid #303030;border-radius:24px;box-shadow:none}
+    .roulette{padding:21px 16px 18px;min-height:0;background:radial-gradient(ellipse at 50% 55%,#293849 0,transparent 56%),#111}
+    .eyebrow{color:#8fbfff;font-size:10px;letter-spacing:.18em}.roulette h2{font-size:30px;letter-spacing:-.045em;margin:10px 0 7px}.sub{font-size:12px}
+    .plate-wrap{margin:26px 0 18px}.plate{width:100%;max-width:520px;min-height:95px;border-radius:10px;border:4px solid #d5d5d5;background:linear-gradient(#fff,#e7e7e7);box-shadow:0 12px 32px #0008,inset 0 -3px 0 #c7c7c7}.plate .country{background:#f2f2f2;color:#222;border-right:2px solid #bbb;width:31px}.plate .country .flag{display:none}.plate .chars{font-size:clamp(27px,7vw,48px);color:#111;letter-spacing:.015em}.plate .region{color:#111;border-left:2px solid #bbb;min-width:60px;font-size:clamp(23px,5vw,32px)}
+    .result-line{font-size:12px;margin-bottom:12px;color:#aaa}.action-row{display:block}.btn{border-radius:99px}.btn-primary{width:100%;padding:19px;background:#f4f3ef;color:#111;box-shadow:0 10px 30px #fff1;font-size:15px;letter-spacing:.08em}.price{font-size:11px}.btn-secondary{background:#202020;border:1px solid #383838;color:#eee}.quick-row{justify-content:space-between;margin-top:12px}.quick-row>span{max-width:150px;text-align:right;line-height:1.4}.quick-toggle{border-radius:99px}.hint{font-size:10px}
+    .luck-note{background:#1c1a14;border-color:#51452b;border-radius:14px}.luck-meter{margin-top:14px}.meter-track{height:7px}
+    .side{display:grid;grid-template-columns:1fr;gap:12px;margin-top:14px}.daily,.info{padding:17px}.daily-row{margin:12px 0}.gift{border-radius:50%;background:#29251a;border-color:#51452b}.btn-daily{border-radius:99px}
+    .info .stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat{background:#101010;border-color:#2b2b2b}.stat strong{font-size:18px}
+    .task-panels{grid-template-columns:1fr;gap:12px;margin-top:14px}.task-panel{padding:17px}.task-card{background:#101010;border-color:#2b2b2b;border-radius:15px}.task-claim{border-radius:99px}
+    .collection{margin-top:14px;padding:17px}.garage-bulk{grid-template-columns:1fr}.garage-bulk button{width:100%}.collection-head{align-items:center}.collection-head h3{font-size:20px}.collection-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.item{background:#101010;border-color:#343434;border-radius:17px;padding:10px}.item .plate{min-height:47px}.item .plate .country{width:16px}.item .plate .chars{font-size:clamp(12px,3vw,19px)}.item .plate .region{min-width:26px;font-size:12px}.item-meta{flex-wrap:wrap}.sell{border-radius:99px}
+    .bottom-note{text-align:center;padding:20px 8px 12px;color:#666}
+    .bottom-nav{position:fixed;z-index:20;left:50%;bottom:max(12px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(92%,650px);display:flex;gap:4px;padding:7px;background:#222e;border:1px solid #444;border-radius:99px;backdrop-filter:blur(18px);box-shadow:0 12px 45px #0009}
+    .bottom-nav button{flex:1;border:0;border-radius:99px;background:transparent;color:#999;padding:12px 4px;font-size:10px;font-weight:800;letter-spacing:.04em}.bottom-nav button.active{background:#f0efeb;color:#151515}
+
+    .profile-panel{margin-top:16px;padding:20px;background:radial-gradient(ellipse at 15% 0%,#3a2028 0,transparent 48%),#171717}
+    .profile-cover{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+    .profile-avatar{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;overflow:hidden;flex-shrink:0;border:2px solid #a94b57;background:linear-gradient(145deg,#3a2028,#1d2028);font-size:30px;font-weight:900;color:#fff}
+    .profile-avatar img{width:100%;height:100%;object-fit:cover}
+    .profile-name{font-size:25px;font-weight:900;letter-spacing:-.04em;overflow-wrap:anywhere}.profile-sub{font-size:11px;color:var(--muted);margin-top:5px}
+    .profile-level{margin-left:auto;text-align:right;white-space:nowrap}.profile-level strong{display:block;font-size:20px}.profile-level span{font-size:10px;color:var(--muted);letter-spacing:.12em}
+    .profile-xp{height:7px;background:#303030;border-radius:99px;overflow:hidden;margin:12px 0 20px}.profile-xp-fill{height:100%;width:0;background:linear-gradient(90deg,#ff6877,#ffb05f);border-radius:99px;transition:width .3s}
+    .profile-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.profile-stat{padding:14px;border:1px solid #303030;background:#101010;border-radius:15px;min-width:0}.profile-stat small{display:block;color:var(--muted);font-size:10px;letter-spacing:.08em;text-transform:uppercase}.profile-stat strong{display:block;margin-top:7px;font-size:clamp(17px,4vw,23px);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.profile-best{margin-top:12px;border:1px solid #3a3430;background:#111;border-radius:16px;padding:14px}.profile-best-label{font-size:10px;letter-spacing:.12em;color:var(--muted);margin-bottom:10px}.profile-best-empty{color:#777;font-size:12px;padding:8px 0}.profile-best .plate{max-width:100%;min-height:62px}.profile-best-meta{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:9px;font-size:12px}.profile-action{margin-top:13px;width:100%}
+    @media(max-width:440px){.profile-panel{padding:16px}.profile-avatar{width:62px;height:62px}.profile-name{font-size:21px}.profile-level strong{font-size:17px}.bottom-nav button{font-size:9px;padding-left:2px;padding-right:2px}}
+
+    .showcase-panel{margin-top:16px;padding:18px;background:#171717;border:1px solid #343434;border-radius:22px}
+    .showcase-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;margin:14px 0}
+    .showcase-controls select{min-width:0;width:100%;background:#101010;color:#f4f3f0;border:1px solid #3a3a3a;border-radius:12px;padding:12px;font:inherit}
+    .showcase-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .showcase-card{background:#101010;border:1px solid #333;border-radius:16px;padding:12px;min-width:0}
+    .showcase-owner{font-size:11px;color:#aaa;margin:9px 0 4px;overflow-wrap:anywhere}
+    .showcase-label{font-size:10px;color:#777;letter-spacing:.08em;text-transform:uppercase}
+    .showcase-status{font-size:11px;color:#bdbdbd;line-height:1.5;margin-top:10px}
+    .showcase-btn{border:1px solid #454545;background:#f0efeb;color:#111;border-radius:99px;padding:11px 14px;font-weight:850;font-size:10px;white-space:nowrap}
+    .showcase-remove{margin-top:9px;width:100%;border:1px solid #454545;background:#202020;color:#ddd;border-radius:99px;padding:9px;font-size:10px;font-weight:800}
+    @media(max-width:440px){.showcase-controls{grid-template-columns:1fr}.showcase-btn{width:100%}}
+    .section-focus{scroll-margin-top:90px}
+    @media(min-width:760px){.hero{display:grid;grid-template-columns:1.15fr .85fr}.side{display:flex;margin-top:0}.roulette{padding:26px}.task-panels{grid-template-columns:1fr 1fr}.collection-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.bottom-nav{width:430px}}
+    @media(max-width:440px){.app{padding-left:12px;padding-right:12px}.topbar{margin-left:-12px;margin-right:-12px;padding-left:12px;padding-right:12px}.brand h1{font-size:14px}.balance strong{font-size:16px}.roulette h2{font-size:27px}.collection-head{flex-direction:row}.collection-head h3{font-size:17px}.task-card{grid-template-columns:minmax(0,1fr) auto}.task-claim{min-width:78px;padding:8px 7px;font-size:9px}}
+  </style>
+
+
+  <style>
+    /* Новая анимация открытия: короткая вспышка корпуса и последовательный flip букв */
+    .plate-wrap .plate{position:relative;overflow:hidden;isolation:isolate}
+    .plate-wrap .plate::after{content:"";position:absolute;z-index:5;inset:-20% auto -20% -45%;width:32%;pointer-events:none;transform:skewX(-18deg);background:linear-gradient(90deg,transparent,#ffffffb8,transparent);opacity:0}
+    .plate-wrap.fx-common .plate::after,.plate-wrap.fx-rare .plate::after,.plate-wrap.fx-epic .plate::after,.plate-wrap.fx-legendary .plate::after,.plate-wrap.fx-mythical .plate::after{animation:plateSweep .8s ease-out .12s both}
+    .plate-wrap .plate.revealing{animation:plateEntrance .48s cubic-bezier(.18,.85,.25,1) both}
+    .reveal-char{opacity:0;filter:blur(4px);transform:translateY(-12px) rotateX(65deg) scale(.72);transform-origin:50% 80%;animation:characterFlip .34s cubic-bezier(.16,.8,.2,1) forwards;animation-delay:var(--char-delay,0ms);will-change:transform,opacity,filter}
+    .region .reveal-char{font-size:inherit}
+    .plate.revealing .chars{perspective:450px}
+    .plate.revealing .region{perspective:300px}
+    @keyframes characterFlip{0%{opacity:0;filter:blur(4px);transform:translateY(-12px) rotateX(65deg) scale(.72)}55%{opacity:1;filter:blur(0);transform:translateY(2px) rotateX(-9deg) scale(1.12)}78%{transform:translateY(-1px) rotateX(3deg) scale(.98)}100%{opacity:1;filter:blur(0);transform:translateY(0) rotateX(0) scale(1)}}
+    @keyframes plateEntrance{0%{transform:translateY(9px) scale(.965);filter:brightness(.75)}65%{transform:translateY(-2px) scale(1.015);filter:brightness(1.2)}100%{transform:translateY(0) scale(1);filter:brightness(1)}}
+    @keyframes plateSweep{0%{left:-45%;opacity:0}18%{opacity:.9}100%{left:125%;opacity:0}}
+    @keyframes noteFade{to{opacity:1}}
+    @media(prefers-reduced-motion:reduce){.reveal-char,.plate-wrap .plate,.plate-wrap .plate::after{animation-duration:.01ms!important;animation-delay:0ms!important}}
+  </style>
+
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand"><div class="logo">⌁</div><div><h1>AUTO NUMBERS</h1><p>NUMBER HUNT CLUB</p></div></div>
+      <div class="balance"><div class="coin">₽</div><div><small>Ваш баланс</small><strong id="balance">100 000 ₽</strong></div></div>
+    </header>
+
+    <section class="hero section-focus" id="gameSection">
+      <div class="panel roulette">
+        <div class="eyebrow">Единая рулетка</div>
+        <h2>Поймай свой<br>идеальный номер.</h2>
+        <p class="sub">Одна рулетка. Одна цена. Каждый номер — новый шанс пополнить коллекцию.</p>
+        <div class="plate-wrap"><div class="plate" id="mainPlate" aria-label="Игровой автомобильный номер"><div class="country"><span class="flag">🇷🇺</span><span>RUS</span></div><div class="chars" id="mainChars">А777АА</div><div class="region" id="mainRegion">77<small>RUS</small></div></div><div class="confetti" id="confettiLayer" aria-hidden="true"></div></div>
+        <div class="result-line" id="resultLine" aria-live="polite">Готов к крутке? Стоимость — 25 000 ₽</div>
+        <div class="action-row"><button class="btn btn-primary btn-wide" id="spinBtn">КРУТИТЬ <span class="price">25 000 ₽</span></button></div>
+        <div class="quick-row"><button class="btn btn-secondary quick-toggle" id="quickBtn" type="button" aria-pressed="false">БЫСТРОЕ ОТКРЫТИЕ: ВЫКЛ</button><span>Ускоряет рулетку, сохраняя эффект выпадения.</span></div>
+        <div class="hint">Выпавший номер автоматически попадёт в коллекцию.</div>
+      </div>
+
+      <div class="side">
+        <div class="panel daily">
+          <div class="section-head"><h3>Ежедневный бонус</h3><span class="tiny-tag">DAILY</span></div>
+          <div class="daily-row"><div class="gift">🎁</div><div><strong>+15 000 ₽</strong><span id="dailyText">Забирай бонус раз в день</span></div></div>
+          <button class="btn btn-secondary btn-daily" id="dailyBtn">ЗАБРАТЬ БОНУС</button>
+        </div>
+        <div class="panel info section-focus" id="statsSection">
+          <div class="section-head"><h3>Твоя статистика</h3></div>
+          <div class="stats"><div class="stat"><small>Номеров найдено</small><strong id="foundCount">0</strong></div><div class="stat"><small>В коллекции</small><strong id="collectionCount">0</strong></div><div class="stat"><small>Потрачено</small><strong id="spentTotal">0 ₽</strong></div><div class="stat"><small>Продано</small><strong id="soldCount">0</strong></div></div>
+          <div class="rarity-list">
+            <div class="rarity-row"><div class="rarity-left"><i class="dot" style="--rarity:#9ba7b8"></i>Обычный</div><span>75%</span></div>
+            <div class="rarity-row"><div class="rarity-left"><i class="dot" style="--rarity:#62b9ff"></i>Редкий</div><span>20%</span></div>
+            <div class="rarity-row"><div class="rarity-left"><i class="dot" style="--rarity:#ba8dff"></i>Эпический</div><span>4,5%</span></div>
+            <div class="rarity-row"><div class="rarity-left"><i class="dot" style="--rarity:#f4c76b"></i>Легендарный</div><span>0,45%</span></div>
+            <div class="rarity-row"><div class="rarity-left"><i class="dot" style="--rarity:#ff5be7"></i>Мифический</div><span>0,05%</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel profile-panel section-focus" id="profileSection">
+      <div class="profile-cover">
+        <div class="profile-avatar" id="profileAvatar">AN</div>
+        <div style="min-width:0;flex:1"><div class="profile-name" id="profileName">Игрок AUTO</div><div class="profile-sub" id="profileTag">ПРОФИЛЬ ИГРОКА · AUTO NUMBERS</div></div>
+        <div class="profile-level"><span>УРОВЕНЬ</span><strong id="profileLevel">1</strong></div>
+      </div>
+      <div class="profile-xp"><div class="profile-xp-fill" id="profileXpFill"></div></div>
+      <div class="section-head"><h3>Мой профиль</h3><span class="tiny-tag" id="profileXpText">0 / 10 XP</span></div>
+      <div class="profile-stats" style="margin-top:14px">
+        <div class="profile-stat"><small>Общий капитал</small><strong id="profileCapital">100 000 ₽</strong></div>
+        <div class="profile-stat"><small>Номеров в гараже</small><strong id="profileGarageCount">0</strong></div>
+        <div class="profile-stat"><small>Легендарные</small><strong id="profileLegendary">0</strong></div>
+        <div class="profile-stat"><small>Мифические</small><strong id="profileMythical">0</strong></div>
+      </div>
+      <div class="profile-best"><div class="profile-best-label">ЛУЧШИЙ НОМЕР В КОЛЛЕКЦИИ</div><div id="profileBest"><div class="profile-best-empty">Пока нет номеров — сделай первую крутку.</div></div></div>
+      <button class="btn btn-secondary profile-action" id="profileToGarage" type="button">ОТКРЫТЬ ГАРАЖ</button>
+    </section>
+
+    <section class="task-panels section-focus" id="tasksSection">
+      <div class="panel task-panel">
+        <div class="section-head"><h3>Ежедневные задания</h3><span class="tiny-tag">DAILY</span></div>
+        <p class="task-intro">Выполняй задания и забирай дополнительные рубли. Список обновляется каждый день.</p>
+        <div class="task-list" id="dailyTasks"></div>
+      </div>
+      <div class="panel task-panel">
+        <div class="section-head"><h3>Еженедельные задания</h3><span class="tiny-tag weekly-tag">WEEKLY</span></div>
+        <p class="task-intro">Более крупные цели и награды. Прогресс обновляется в начале недели.</p>
+        <div class="task-list" id="weeklyTasks"></div>
+      </div>
+    </section>
+
+    <section class="panel collection section-focus" id="garageSection">
+      <div class="collection-head"><h3>Моя коллекция <span class="count" id="collectionSubtitle">— пока пусто</span></h3><button class="btn btn-secondary" id="sellAllBtn" style="padding:9px 12px;font-size:11px">ПРОДАТЬ ВСЕ</button></div>
+      <div class="garage-bulk">
+        <select id="sellRaritySelect" aria-label="Выбрать редкость для продажи">
+          <option value="common">Обычные</option><option value="rare">Редкие</option><option value="epic">Эпические</option><option value="legendary">Легендарные</option><option value="mythical">Мифические</option>
+        </select>
+        <button class="btn btn-secondary" id="sellRarityBtn" type="button">ПРОДАТЬ ЭТУ РЕДКОСТЬ</button>
+        <div class="garage-bulk-info" id="sellRarityInfo">Подсчёт номеров выбранной редкости…</div>
+      </div>
+      <div class="collection-grid" id="collectionGrid"><div class="empty">Твоя коллекция пока пуста.<br>Сделай первую крутку и найди свой номер.</div></div>
+    </section>
+    <section class="panel contracts-panel section-focus" id="contractsSection">
+      <div class="section-head"><h3>Контракты</h3><span class="tiny-tag contract-tag">CRAFT</span></div>
+      <p class="task-intro">Обменивай номера высокой редкости. При неудаче контракт сгорает вместе с ингредиентами.</p>
+      <div class="contracts-grid">
+        <article class="contract-card">
+          <div class="contract-icon epic-icon">◆</div><div class="contract-title">Легендарный контракт</div>
+          <p>Сдай 5 эпических номеров</p>
+          <div class="contract-chance legendary-text">70% шанс успеха</div>
+          <div class="contract-progress" id="epicContractCount">В гараже: 0 / 5</div>
+          <button class="contract-btn legendary-btn" id="epicContractBtn" type="button">СОБРАТЬ ЛЕГЕНДАРНЫЙ</button>
+        </article>
+        <article class="contract-card">
+          <div class="contract-icon legendary-icon">★</div><div class="contract-title">Мифический контракт</div>
+          <p>Сдай 5 легендарных номеров</p>
+          <div class="contract-chance mythical-text">30% шанс успеха</div>
+          <div class="contract-progress" id="legendaryContractCount">В гараже: 0 / 5</div>
+          <button class="contract-btn mythical-btn" id="legendaryContractBtn" type="button">СОБРАТЬ МИФИЧЕСКИЙ</button>
+        </article>
+      </div>
+      <div class="contract-result" id="contractResult" aria-live="polite">Выбери контракт, когда соберёшь нужные номера.</div>
+    </section>
+    <section class="showcase-panel section-focus" id="showcaseSection">
+      <div class="section-head"><h3>Публичная витрина</h3><span class="tiny-tag">SHOWCASE</span></div>
+      <p class="task-intro">Выстави любой номер из гаража — он появится на твоей витрине. В этой версии витрина демонстрационная и хранится в текущем браузере.</p>
+      <div class="showcase-controls"><select id="showcaseSelect" aria-label="Выбрать номер для витрины"><option value="">Сначала найди номер в гараже</option></select><button class="showcase-btn" id="showcasePublish" type="button">ВЫСТАВИТЬ НОМЕР</button></div>
+      <div class="showcase-status" id="showcaseStatus" aria-live="polite">Пока ничего не выставлено.</div>
+      <div class="showcase-grid" id="showcaseGrid"><div class="empty">На витрине пока нет номеров.</div></div>
+    </section>
+    <p class="bottom-note">AUTO NUMBERS — игровая коллекция вымышленных номеров. Не является сервисом подбора, покупки или проверки настоящих регистрационных знаков.<br>Демо-версия: прогресс хранится в браузере на этом устройстве.</p>
+  </main>
+  <nav class="bottom-nav" aria-label="Основная навигация">
+    <button class="active" data-target="gameSection">ИГРА</button>
+    <button data-target="garageSection">ГАРАЖ</button>
+    <button data-target="contractsSection">КОНТРАКТЫ</button>
+    <button data-target="tasksSection">ЗАДАНИЯ</button>
+    <button data-target="statsSection">ТОП</button>
+    <button data-target="profileSection">ПРОФИЛЬ</button>
+  </nav>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    (() => {
+      const SPIN_COST = 25000;
+      const DAILY_REWARD = 15000;
+      const letters = ['А','В','Е','К','М','Н','О','Р','С','Т','У','Х'];
+      // 100 игровых кодов регионов: 60 обычных, 25 редких, 10 эпических и 5 легендарных.
+      // Московские коды получают отдельную ценовую надбавку.
+      const regionGroups = {
+        common: '01 02 03 04 05 06 07 08 09 10 11 13 14 15 16 17 18 19 20 21 22 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 51 52 53 54 55 56 57 58 59 60 61 62 63'.split(' '),
+        rare: '64 65 66 67 68 69 70 71 72 73 74 75 76 79 83 86 87 89 91 92 93 94 95 96 98'.split(' '),
+        epic: '12 23 50 90 150 190 750 178 198 797'.split(' '),
+        legendary: '77 97 99 177 199'.split(' ')
+      };
+      const regionTierInfo = {
+        common:{name:'Обычный регион',multiplier:1},
+        rare:{name:'Редкий регион',multiplier:1.15},
+        epic:{name:'Эпический регион',multiplier:1.4},
+        legendary:{name:'Легендарный регион',multiplier:1.8}
+      };
+      const moscowCodes = new Set(['50','90','150','190','750','790','77','97','99','177','197','199','777','797','799','977']);
+      const regions = Object.entries(regionGroups).flatMap(([tier,codes])=>codes.map(code=>({code,tier,priceMultiplier:regionTierInfo[tier].multiplier*(moscowCodes.has(code)?2.5:1),moscow:moscowCodes.has(code)})));
+      const regionByCode = new Map(regions.map(region=>[region.code,region]));
+      function pickRegion(numberTier){
+        // Более ценные игровые номера немного чаще получают редкие региональные коды.
+        const pools = numberTier==='mythical' ? ['common','rare','epic','legendary','legendary'] : numberTier==='legendary' ? ['common','rare','epic','legendary'] : ['common','common','common','rare','rare','epic','legendary'];
+        const group=pick(pools);
+        return pick(regionGroups[group]);
+      }
+      function getRegionMeta(code){return regionByCode.get(String(code)) || {code:String(code),tier:'common',priceMultiplier:1,moscow:false};}
+      const tierInfo = {
+        common: {name:'Обычный', color:'#9ba7b8', min:15000, max:32000},
+        rare: {name:'Редкий', color:'#62b9ff', min:35000, max:100000},
+        epic: {name:'Эпический', color:'#ba8dff', min:130000, max:300000},
+        legendary: {name:'Легендарный', color:'#f4c76b', min:500000, max:1500000},
+        mythical: {name:'Мифический', color:'#ff5be7', min:1500000, max:5000000}
+      };
+      const dailyTaskDefs = [
+        {id:'daily_spin', title:'Первая крутка', desc:'Сделай 1 крутку', progress:'spins', target:1, reward:10000},
+        {id:'daily_sell', title:'Освободи гараж', desc:'Продай хотя бы 1 номер', progress:'sales', target:1, reward:10000},
+        {id:'daily_bonus', title:'Забери ежедневный бонус', desc:'Получи ежедневные 15 000 ₽', progress:'bonus', target:1, reward:5000}
+      ];
+      const weeklyTaskDefs = [
+        {id:'weekly_spins', title:'Постоянный игрок', desc:'Сделай 5 круток за неделю', progress:'spins', target:5, reward:35000},
+        {id:'weekly_sales', title:'Большая распродажа', desc:'Продай 3 номера за неделю', progress:'sales', target:3, reward:25000},
+        {id:'weekly_rare', title:'Охота за редкостью', desc:'Получи легендарный или мифический номер', progress:'rare', target:1, reward:50000}
+      ];
+      const tg = window.Telegram?.WebApp;
+      try { tg?.ready(); tg?.expand(); } catch (_) {}
+      const userPart = tg?.initDataUnsafe?.user?.id ? `tg_${tg.initDataUnsafe.user.id}` : 'browser';
+      const STORAGE_KEY = `auto_numbers_v1_${userPart}`;
+      const freshState = () => ({
+        balance:100000, collection:[], totalFound:0, totalSpent:0, totalSold:0,
+        dailyDate:null, lastNumber:null, nextId:1, fastOpen:false, showcaseId:null,
+        dailyTaskDate:null, dailyTasks:{spins:0,sales:0,bonus:0,claimed:[]},
+        weeklyTaskWeek:null, weeklyTasks:{spins:0,sales:0,rare:0,claimed:[]}
+      });
+      function loadState(){
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if(!raw) return freshState();
+          const parsed = JSON.parse(raw);
+          if(!parsed || typeof parsed.balance !== 'number' || !Array.isArray(parsed.collection)) return freshState();
+          const migratedCollection = parsed.collection.map(item => ({
+            ...item,
+            // Migration from older builds which used the extra "Красивый" tier.
+            tier: item.tier === 'nice' ? 'rare' : (tierInfo[item.tier] ? item.tier : 'common'),
+          }));
+          const defaults = freshState();
+          const dailyTasks = parsed.dailyTasks && typeof parsed.dailyTasks === 'object' ? parsed.dailyTasks : {};
+          const weeklyTasks = parsed.weeklyTasks && typeof parsed.weeklyTasks === 'object' ? parsed.weeklyTasks : {};
+          return {
+            ...defaults, ...parsed, collection:migratedCollection, showcaseId:parsed.showcaseId ?? null,
+            fastOpen:Boolean(parsed.fastOpen),
+            dailyTasks:{...defaults.dailyTasks,...dailyTasks,claimed:Array.isArray(dailyTasks.claimed)?dailyTasks.claimed:[]},
+            weeklyTasks:{...defaults.weeklyTasks,...weeklyTasks,claimed:Array.isArray(weeklyTasks.claimed)?weeklyTasks.claimed:[]}
+          };
+        } catch (_) { return freshState(); }
+      }
+      let state = loadState();
+      let spinning = false;
+      const $ = id => document.getElementById(id);
+      const money = n => `${Math.round(n).toLocaleString('ru-RU')} ₽`;
+      const todayKey = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+      function save(){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) { toast('Не удалось сохранить прогресс в браузере.'); } }
+      function toast(msg){ const el=$('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(toast.timer); toast.timer=setTimeout(()=>el.classList.remove('show'),2500); }
+      function weekKey(){ const d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-((d.getDay()+6)%7)); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+      function ensureTaskPeriods(){
+        let changed=false;
+        if(state.dailyTaskDate!==todayKey()) { state.dailyTaskDate=todayKey(); state.dailyTasks={spins:0,sales:0,bonus:0,claimed:[]}; changed=true; }
+        if(state.weeklyTaskWeek!==weekKey()) { state.weeklyTaskWeek=weekKey(); state.weeklyTasks={spins:0,sales:0,rare:0,claimed:[]}; changed=true; }
+        if(changed) save();
+      }
+      function progressTask(key,amount=1){
+        ensureTaskPeriods();
+        state.dailyTasks[key]=Math.max(0,Number(state.dailyTasks[key]||0)+amount);
+        state.weeklyTasks[key]=Math.max(0,Number(state.weeklyTasks[key]||0)+amount);
+      }
+      function renderTaskGroup(containerId,scope,defs,progressState){
+        const container=$(containerId); container.replaceChildren();
+        defs.forEach(task=>{
+          const value=Math.min(task.target,Number(progressState[task.progress]||0));
+          const claimed=progressState.claimed.includes(task.id);
+          const ready=value>=task.target && !claimed;
+          const card=document.createElement('div'); card.className='task-card';
+          const body=document.createElement('div'); body.className='task-body';
+          const title=document.createElement('strong'); title.className='task-title'; title.textContent=task.title;
+          const desc=document.createElement('span'); desc.className='task-desc'; desc.textContent=task.desc;
+          const progHead=document.createElement('div'); progHead.className='task-progress-head';
+          const progLabel=document.createElement('span'); progLabel.textContent='Прогресс';
+          const progValue=document.createElement('span'); progValue.textContent=`${value} / ${task.target}`;
+          progHead.append(progLabel,progValue);
+          const track=document.createElement('div'); track.className='task-progress-track';
+          const fill=document.createElement('div'); fill.className='task-progress-fill'; fill.style.width=`${Math.min(100,value/task.target*100)}%`; track.append(fill);
+          body.append(title,desc,progHead,track);
+          const button=document.createElement('button'); button.type='button'; button.className='task-claim'+(ready?' ready':'')+(claimed?' claimed':'');
+          button.disabled=!ready;
+          button.textContent=claimed?'ПОЛУЧЕНО':(ready?`ЗАБРАТЬ +${money(task.reward)}`:'В ПРОЦЕССЕ');
+          button.addEventListener('click',()=>claimTask(scope,task.id));
+          card.append(body,button); container.append(card);
+        });
+      }
+      function renderTasks(){
+        ensureTaskPeriods();
+        renderTaskGroup('dailyTasks','daily',dailyTaskDefs,state.dailyTasks);
+        renderTaskGroup('weeklyTasks','weekly',weeklyTaskDefs,state.weeklyTasks);
+      }
+      function claimTask(scope,id){
+        ensureTaskPeriods();
+        const defs=scope==='daily'?dailyTaskDefs:weeklyTaskDefs;
+        const progressState=scope==='daily'?state.dailyTasks:state.weeklyTasks;
+        const task=defs.find(x=>x.id===id);
+        if(!task || progressState.claimed.includes(id) || Number(progressState[task.progress]||0)<task.target) return;
+        progressState.claimed.push(id); state.balance+=task.reward; save(); render();
+        toast(`Задание выполнено: +${money(task.reward)}`);
+      }
+      function randInt(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+      function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+      function rollTier(){
+        // Сниженные шансы: обычный 75%, редкий 20%, эпический 4.5%, легендарный 0.45%, мифический 0.05%.
+        const r=Math.random()*100;
+        if(r<0.05) return 'mythical';
+        if(r<0.5) return 'legendary';
+        if(r<5) return 'epic';
+        if(r<25) return 'rare';
+        return 'common';
+      }
+      function platePattern(tier){
+        let nums;
+        const r=Math.random();
+        if(tier==='mythical') nums=pick(['001','007','010','100','111','222','333','444','555','666','777','888','999']);
+        else if(tier==='legendary') nums=pick(['001','007','010','100','111','222','333','555','666','777','888','999']);
+        else if(tier==='epic') nums=pick(['111','222','333','444','555','666','777','888','999','101','202','303','505','707','808','909']);
+        else if(tier==='rare') nums=r<.5 ? pick(['111','222','333','444','555','666','777','888','999','121','212','323','434','545','656','767','878','989']) : String(randInt(100,999));
+        else nums=String(randInt(100,999));
+        let l1=pick(letters), l2=pick(letters), l3=pick(letters);
+        if(tier==='mythical') { l1=pick(['А','О','М','Т']); l2=l1; l3=l1; }
+        else if(tier==='legendary') { l1=pick(['А','О','М','Т']); l2=l1; l3=l1; }
+        else if(tier==='epic' && r<.75){ l2=l1; l3=l1; }
+        else if(tier==='rare' && r<.5){ l3=l2; }
+        return {text:`${l1}${nums}${l2}${l3}`, region:pickRegion(tier)};
+      }
+      function makePlate(forcedTier=null){
+        const tier=forcedTier || rollTier(); const pat=platePattern(tier); const info=tierInfo[tier];
+        const regionMeta=getRegionMeta(pat.region);
+        const baseValue=randInt(info.min,info.max);
+        const value=Math.round(baseValue*regionMeta.priceMultiplier);
+        return {id:state.nextId++, text:pat.text, region:pat.region, regionTier:regionMeta.tier, regionMultiplier:regionMeta.priceMultiplier, tier, value, createdAt:Date.now()};
+      }
+      function launchConfetti(tier){
+        const layer=$('confettiLayer');
+        const colors=tier==='mythical' ? ['#ff5be7','#8f70ff','#ffffff','#ffca78','#65d7ff'] : ['#f4c76b','#fff0b7','#ff8794','#ffffff'];
+        for(let i=0;i<(tier==='mythical'?44:30);i++){
+          const bit=document.createElement('span'); bit.className='confetti-piece';
+          bit.style.left=`${randInt(0,100)}%`;
+          bit.style.backgroundColor=pick(colors);
+          bit.style.setProperty('--dx',`${randInt(-150,150)}px`);
+          bit.style.setProperty('--dy',`${randInt(90,230)}px`);
+          bit.style.setProperty('--rot',`${randInt(180,1080)}deg`);
+          bit.style.setProperty('--duration',`${randInt(12,22)/10}s`);
+          bit.style.setProperty('--delay',`${randInt(0,18)/100}s`);
+          layer.append(bit);
+          setTimeout(()=>bit.remove(),2600);
+        }
+      }
+      function revealCharacters(item,isFast){
+        const charsHost=$('mainChars');
+        const regionHost=$('mainRegion');
+        const allChars=[...item.text];
+        const regionChars=[...String(item.region)];
+        // Буквы проявляются волной слева направо, регион открывается следом.
+        const delay=isFast?42:105;
+        const duration=isFast?230:340;
+        charsHost.replaceChildren();
+        allChars.forEach((char,index)=>{
+          const span=document.createElement('span'); span.className='reveal-char'; span.textContent=char;
+          span.style.setProperty('--char-delay',`${index*delay}ms`);
+          span.style.animationDuration=`${duration}ms`;
+          span.style.setProperty('--char-index',index);
+          charsHost.append(span);
+        });
+        regionHost.replaceChildren();
+        regionChars.forEach((char,index)=>{
+          const span=document.createElement('span'); span.className='reveal-char region-char'; span.textContent=char;
+          span.style.setProperty('--char-delay',`${(allChars.length+index)*delay}ms`);
+          span.style.animationDuration=`${duration}ms`;
+          regionHost.append(span);
+        });
+        const note=document.createElement('small'); note.textContent='RUS';
+        note.style.opacity='0'; note.style.animation=`noteFade .25s ease ${(allChars.length+regionChars.length)*delay}ms forwards`;
+        regionHost.append(note);
+        return (allChars.length+regionChars.length)*delay+duration;
+      }
+      function playReveal(item){
+        const wrap=document.querySelector('.plate-wrap');
+        const effects=['fx-common','fx-rare','fx-epic','fx-legendary','fx-mythical'];
+        wrap.classList.remove(...effects);
+        void wrap.offsetWidth;
+        wrap.classList.add(`fx-${item.tier}`);
+        if(item.tier==='legendary' || item.tier==='mythical') launchConfetti(item.tier);
+        setTimeout(()=>wrap.classList.remove(...effects),2300);
+      }
+      function buildPlate(text,region,small=false){
+        const p=document.createElement('div'); p.className='plate'+(small?' small':'');
+        const country=document.createElement('div'); country.className='country';
+        const flag=document.createElement('span'); flag.className='flag'; flag.textContent='🇷🇺';
+        const rus=document.createElement('span'); rus.textContent='RUS'; country.append(flag,rus);
+        const chars=document.createElement('div'); chars.className='chars'; chars.textContent=text;
+        const reg=document.createElement('div'); reg.className='region'; reg.append(document.createTextNode(region));
+        const note=document.createElement('small'); note.textContent='RUS'; reg.append(note);
+        p.append(country,chars,reg); return p;
+      }
+      function renderProfile(){
+        const user=tg?.initDataUnsafe?.user || null;
+        const displayName=user ? [user.first_name,user.last_name].filter(Boolean).join(' ') : 'Игрок AUTO';
+        $('profileName').textContent=displayName || 'Игрок AUTO';
+        $('profileTag').textContent=user?.username ? '@'+user.username : (user ? 'ИГРОК TELEGRAM · AUTO NUMBERS' : 'ЛОКАЛЬНЫЙ ПРОФИЛЬ · AUTO NUMBERS');
+        const avatar=$('profileAvatar');
+        if(user?.photo_url){ avatar.replaceChildren(); const img=document.createElement('img'); img.src=user.photo_url; img.alt='Аватар игрока'; avatar.append(img); }
+        else if(!avatar.querySelector('img')) avatar.textContent=(displayName||'AN').split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase();
+        const found=Number(state.totalFound)||0; const level=Math.floor(found/10)+1; const xp=found%10;
+        $('profileLevel').textContent=level; $('profileXpText').textContent=`${xp} / 10 XP`;
+        $('profileXpFill').style.width=`${xp*10}%`;
+        const garageValue=state.collection.reduce((sum,item)=>sum+(Number(item.value)||0),0);
+        $('profileCapital').textContent=money(state.balance+garageValue);
+        $('profileGarageCount').textContent=state.collection.length;
+        $('profileLegendary').textContent=state.collection.filter(x=>x.tier==='legendary').length;
+        $('profileMythical').textContent=state.collection.filter(x=>x.tier==='mythical').length;
+        const best=[...state.collection].sort((a,b)=>(Number(b.value)||0)-(Number(a.value)||0))[0];
+        const bestHost=$('profileBest'); bestHost.replaceChildren();
+        if(!best){ const empty=document.createElement('div'); empty.className='profile-best-empty'; empty.textContent='Пока нет номеров — сделай первую крутку.'; bestHost.append(empty); }
+        else { bestHost.append(buildPlate(best.text,best.region,true)); const meta=document.createElement('div'); meta.className='profile-best-meta'; const rarity=document.createElement('span'); rarity.style.color=tierInfo[best.tier]?.color||'#fff'; rarity.textContent=tierInfo[best.tier]?.name||'Обычный'; const worth=document.createElement('strong'); worth.textContent=money(best.value); meta.append(rarity,worth); bestHost.append(meta); }
+      }
+      function renderContracts(){
+        const epicCount=state.collection.filter(item=>item.tier==='epic').length;
+        const legendaryCount=state.collection.filter(item=>item.tier==='legendary').length;
+        $('epicContractCount').textContent=`В гараже: ${Math.min(epicCount,5)} / 5`;
+        $('legendaryContractCount').textContent=`В гараже: ${Math.min(legendaryCount,5)} / 5`;
+        $('epicContractBtn').disabled=epicCount<5 || spinning;
+        $('legendaryContractBtn').disabled=legendaryCount<5 || spinning;
+      }
+      function runContract(inputTier,outputTier,chance){
+        if(spinning) return;
+        const matching=state.collection.filter(item=>item.tier===inputTier);
+        if(matching.length<5) return toast(`Нужно 5 номеров редкости «${tierInfo[inputTier].name}».`);
+        const consume=new Set(matching.slice(0,5).map(item=>item.id));
+        state.collection=state.collection.filter(item=>!consume.has(item.id));
+        if(consume.has(state.showcaseId)) state.showcaseId=null;
+        const success=Math.random()<chance;
+        if(success){
+          const item=makePlate(outputTier); state.collection.push(item); state.lastNumber=item; state.totalFound++;
+          $('contractResult').textContent=`УСПЕХ! Получен ${tierInfo[outputTier].name.toLowerCase()} номер ${item.text} ${item.region} · стоимость ${money(item.value)}.`;
+          $('contractResult').style.color=tierInfo[outputTier].color;
+          playReveal(item);
+          toast(`Контракт успешен! ${tierInfo[outputTier].name}: ${item.text} ${item.region}`);
+        }else{
+          $('contractResult').textContent=`Неудача. 5 номеров «${tierInfo[inputTier].name.toLowerCase()}» сгорели, награда не выпала.`;
+          $('contractResult').style.color='#ff7c88';
+          toast('Контракт не удался — ингредиенты потеряны.');
+        }
+        save(); render();
+      }
+      function render(){
+        $('balance').textContent=money(state.balance);
+        renderProfile();
+        renderContracts();
+        $('foundCount').textContent=state.totalFound;
+        $('collectionCount').textContent=state.collection.length;
+        $('spentTotal').textContent=money(state.totalSpent);
+        $('soldCount').textContent=state.totalSold;
+        $('collectionSubtitle').textContent=state.collection.length ? `— ${state.collection.length} шт.` : '— пока пусто';
+        $('spinBtn').disabled=spinning || state.balance<SPIN_COST;
+        $('spinBtn').innerHTML=state.balance<SPIN_COST ? 'НУЖНО БОЛЬШЕ ₽' : `КРУТИТЬ <span class="price">${money(SPIN_COST)}</span>`;
+        $('quickBtn').disabled=spinning;
+        $('quickBtn').textContent=`БЫСТРОЕ ОТКРЫТИЕ: ${state.fastOpen?'ВКЛ':'ВЫКЛ'}`;
+        $('quickBtn').setAttribute('aria-pressed',String(state.fastOpen));
+        $('quickBtn').classList.toggle('quick-on',state.fastOpen);
+        const claimed=state.dailyDate===todayKey();
+        $('dailyBtn').disabled=claimed;
+        $('dailyBtn').textContent=claimed?'БОНУС УЖЕ ПОЛУЧЕН':'ЗАБРАТЬ БОНУС';
+        $('dailyText').textContent=claimed?'Возвращайся завтра за новым бонусом':'Забирай бонус раз в день';
+        $('sellAllBtn').disabled=state.collection.length===0;
+        updateRaritySellInfo();
+        renderTasks();
+        const grid=$('collectionGrid'); grid.replaceChildren();
+        if(!state.collection.length){ const empty=document.createElement('div'); empty.className='empty'; empty.innerHTML='Твоя коллекция пока пуста.<br>Сделай первую крутку и найди свой номер.'; grid.append(empty); renderShowcase(); return; }
+        [...state.collection].reverse().forEach(item=>{
+          const card=document.createElement('article'); card.className='item';
+          card.append(buildPlate(item.text,item.region,true));
+          const meta=document.createElement('div'); meta.className='item-meta';
+          const rarity=document.createElement('span'); rarity.className='rarity'; rarity.style.setProperty('--rarity',tierInfo[item.tier].color); rarity.textContent=tierInfo[item.tier].name;
+          meta.append(rarity);
+          const worth=document.createElement('span'); worth.className='worth'; worth.textContent=money(item.value); meta.append(worth);
+          const regionMeta=getRegionMeta(item.region);
+          const regionBadge=document.createElement('div'); regionBadge.className='region-rarity';
+          regionBadge.textContent=`Регион: ${regionTierInfo[regionMeta.tier]?.name||'Обычный регион'}${regionMeta.moscow?' · Москва ×2,5':''}`;
+          regionBadge.style.cssText=`font-size:9px;color:${regionMeta.tier==='legendary'?'#f4c76b':regionMeta.tier==='epic'?'#ba8dff':regionMeta.tier==='rare'?'#62b9ff':'#8996a8'};margin:-2px 0 8px;line-height:1.35`;
+          const sell=document.createElement('button'); sell.className='sell'; sell.textContent=`ПРОДАТЬ ЗА ${money(item.value)}`; sell.addEventListener('click',()=>sellOne(item.id));
+          const showcase=document.createElement('button'); showcase.className='showcase-remove'; showcase.style.marginTop='8px'; showcase.textContent=String(state.showcaseId)===String(item.id)?'НА ВИТРИНЕ ✓':'ВЫСТАВИТЬ НА ВИТРИНУ'; showcase.addEventListener('click',()=>publishShowcase(item.id));
+          card.append(meta,regionBadge,sell,showcase); grid.append(card);
+        });
+        renderShowcase();
+      }
+      function publishShowcase(id){
+        const item=state.collection.find(x=>String(x.id)===String(id));
+        if(!item) return toast('Этот номер уже не находится в гараже.');
+        state.showcaseId=item.id; save(); render(); toast(`Номер ${item.text} ${item.region} выставлен на витрину`);
+      }
+      function renderShowcase(){
+        const select=$('showcaseSelect'); if(!select) return;
+        const previous=String(state.showcaseId ?? ''); select.replaceChildren();
+        const placeholder=document.createElement('option'); placeholder.value=''; placeholder.textContent=state.collection.length?'Выбери номер из гаража':'Сначала найди номер в гараже'; select.append(placeholder);
+        state.collection.forEach(item=>{const opt=document.createElement('option');opt.value=String(item.id);opt.textContent=`${item.text} · ${item.region} · ${tierInfo[item.tier]?.name||'Обычный'}`;select.append(opt)});
+        if(state.collection.some(x=>String(x.id)===previous)) select.value=previous;
+        else { state.showcaseId=null; select.value=''; }
+        const grid=$('showcaseGrid'); grid.replaceChildren(); const item=state.collection.find(x=>String(x.id)===String(state.showcaseId));
+        $('showcasePublish').disabled=!state.collection.length;
+        if(!item){$('showcaseStatus').textContent='Выбери номер в гараже и нажми «Выставить номер».';const empty=document.createElement('div');empty.className='empty';empty.textContent='На витрине пока нет номеров.';grid.append(empty);return;}
+        $('showcaseStatus').textContent='Твой выбранный номер отображается в витрине этого демо. Для показа всем игрокам потребуется подключить сервер и общую базу данных.';
+        const card=document.createElement('article');card.className='showcase-card';card.append(buildPlate(item.text,item.region,true));
+        const owner=document.createElement('div');owner.className='showcase-owner';const u=tg?.initDataUnsafe?.user;owner.textContent=u?(u.username?'@'+u.username:[u.first_name,u.last_name].filter(Boolean).join(' ')):'Игрок AUTO';
+        const label=document.createElement('div');label.className='showcase-label';label.textContent='Выбранный номер';
+        const rarity=document.createElement('div');rarity.className='showcase-owner';rarity.style.color=tierInfo[item.tier]?.color||'#fff';rarity.textContent=tierInfo[item.tier]?.name||'Обычный';
+        const remove=document.createElement('button');remove.className='showcase-remove';remove.textContent='УБРАТЬ С ВИТРИНЫ';remove.addEventListener('click',()=>{state.showcaseId=null;save();render();toast('Номер убран с витрины')});
+        card.append(owner,label,rarity,remove);grid.append(card);
+      }
+      function updateRaritySellInfo(){
+        const select=$('sellRaritySelect'); if(!select) return;
+        const tier=select.value;
+        const items=state.collection.filter(item=>item.tier===tier);
+        const total=items.reduce((sum,item)=>sum+(Number(item.value)||0),0);
+        $('sellRarityInfo').textContent=`${tierInfo[tier].name}: ${items.length} шт. · можно получить ${money(total)}.`;
+        $('sellRarityBtn').disabled=items.length===0 || spinning;
+        $('sellRarityBtn').textContent=items.length?`ПРОДАТЬ ${items.length} ШТ.`:'НЕТ НОМЕРОВ';
+      }
+      function sellRarity(){
+        const tier=$('sellRaritySelect').value;
+        const items=state.collection.filter(item=>item.tier===tier);
+        if(!items.length) return toast(`В гараже нет номеров редкости «${tierInfo[tier].name}».`);
+        const ids=new Set(items.map(item=>String(item.id)));
+        const total=items.reduce((sum,item)=>sum+(Number(item.value)||0),0);
+        state.collection=state.collection.filter(item=>!ids.has(String(item.id)));
+        if(state.showcaseId!=null && ids.has(String(state.showcaseId))) state.showcaseId=null;
+        state.balance+=total; state.totalSold+=items.length; progressTask('sales',items.length);
+        save(); render(); toast(`Продано ${items.length} шт. (${tierInfo[tier].name}) за ${money(total)}`);
+      }
+      function sellOne(id){
+        const idx=state.collection.findIndex(x=>x.id===id); if(idx<0) return;
+        const [item]=state.collection.splice(idx,1); if(String(state.showcaseId)===String(item.id)) state.showcaseId=null; state.balance+=item.value; state.totalSold++;
+        progressTask('sales',1); save(); render(); toast(`Номер продан за ${money(item.value)}`);
+      }
+      function dailyBonus(){
+        if(state.dailyDate===todayKey()) return toast('Ты уже забрал сегодняшний бонус.');
+        state.dailyDate=todayKey(); state.balance+=DAILY_REWARD; progressTask('bonus',1); save(); render(); toast(`Бонус получен: +${money(DAILY_REWARD)}`);
+      }
+      function spin(){
+        if(spinning) return;
+        ensureTaskPeriods();
+        if(state.balance<SPIN_COST) return toast('Не хватает денег. Забери ежедневный бонус, выполни задания или продай номер.');
+        spinning=true; state.balance-=SPIN_COST; state.totalSpent+=SPIN_COST;
+        const isFast=state.fastOpen;
+        save(); render();
+        const plate=$('mainPlate'); plate.classList.add('rolling'); $('resultLine').textContent=isFast?'Быстрое открытие…':'Рулетка крутится…'; $('spinBtn').disabled=true;
+        let tick=0; const maxTicks=isFast?6:18; const tickDelay=isFast?45:95;
+        const timer=setInterval(()=>{
+          const temp=platePattern(pick(['common','rare'])); $('mainChars').textContent=temp.text; $('mainRegion').childNodes[0].textContent=tempRegion(); tick++;
+          if(tick>=maxTicks){
+            clearInterval(timer); plate.classList.remove('rolling');
+            const item=makePlate(); state.collection.push(item); state.lastNumber=item; state.totalFound++;
+            const revealDuration=revealCharacters(item,isFast);
+            plate.classList.add('revealing');
+            $('resultLine').innerHTML='Открываем номер…';
+            progressTask('spins',1);
+            if(item.tier==='legendary' || item.tier==='mythical') progressTask('rare',1);
+            playReveal(item); save(); render();
+            setTimeout(()=>{
+              plate.classList.remove('revealing');
+              $('resultLine').innerHTML='Выпал номер: <strong style="color:'+tierInfo[item.tier].color+'">'+tierInfo[item.tier].name+'</strong> · продажа '+money(item.value);
+              spinning=false; save(); render();
+              toast(`Новый номер: ${item.text} ${item.region} — ${tierInfo[item.tier].name}`);
+            },revealDuration);
+          }
+        },tickDelay);
+        function tempRegion(){ return pick(regions); }
+      }
+      document.querySelectorAll('.bottom-nav button').forEach(btn=>btn.addEventListener('click',()=>{
+        document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.toggle('active',b===btn));
+        const target=$(btn.dataset.target); if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
+      }));
+      $('spinBtn').addEventListener('click',spin);
+      $('quickBtn').addEventListener('click',()=>{ if(spinning) return; state.fastOpen=!state.fastOpen; save(); render(); toast(state.fastOpen?'Быстрое открытие включено':'Быстрое открытие выключено'); });
+      $('dailyBtn').addEventListener('click',dailyBonus);
+      $('epicContractBtn').addEventListener('click',()=>runContract('epic','legendary',0.70));
+      $('legendaryContractBtn').addEventListener('click',()=>runContract('legendary','mythical',0.30));
+      $('showcasePublish').addEventListener('click',()=>{const id=$('showcaseSelect').value;if(!id)return toast('Сначала выбери номер из гаража.');publishShowcase(id);});
+      $('showcaseSelect').addEventListener('change',()=>{});
+      $('sellRaritySelect').addEventListener('change',updateRaritySellInfo);
+      $('sellRarityBtn').addEventListener('click',sellRarity);
+      $('sellAllBtn').addEventListener('click',()=>{
+        if(!state.collection.length) return;
+        const total=state.collection.reduce((sum,item)=>sum+item.value,0); const count=state.collection.length;
+        state.collection=[]; state.showcaseId=null; state.balance+=total; state.totalSold+=count; progressTask('sales',count); save(); render(); toast(`Продано номеров: ${count}. Получено ${money(total)}`);
+      });
+      $('profileToGarage').addEventListener('click',()=>{ $('garageSection').scrollIntoView({behavior:'smooth',block:'start'}); });
+      ensureTaskPeriods();
+      render();
+    })();
+  </script>
+</body>
+</html>
